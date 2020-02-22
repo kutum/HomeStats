@@ -8,16 +8,46 @@ namespace HomeStats.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly Context db;
+        HouseRepository repository = HouseRepository.Current;
+
+        public ViewResult Index()
+        {
+            return View(repository.GetAll());
+        }
 
         public HomeController(Context context)
         {
-            db = context;
+            repository.db = context;
         }
-        public IActionResult Index()
+        
+        public IActionResult Add(House house)
         {
-            return View(db.Houses.Include(x=>x.Counters).ToList());
+            if (ModelState.IsValid)
+            {
+                repository.Add(house);
+                return RedirectToAction("Index");
+            }
+            else return View("Index");
         }
+
+        public IActionResult Update (House house)
+        {
+            if(ModelState.IsValid && repository.Update(house))
+            {
+                return RedirectToAction("Index");
+            }
+            else
+            {
+                return View("Index");
+            }
+        }
+
+        public IActionResult Remove(int Id)
+        {
+            repository.Remove(Id);
+            return RedirectToAction("Index");
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

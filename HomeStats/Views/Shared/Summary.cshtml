@@ -1,0 +1,30 @@
+﻿@model IEnumerable<HomeStats.Models.House>
+
+<div class="panel-heading">Все дома</div>
+<div class="panel-body">
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th scope="col">Id</th>
+                <th scope="col">Улица</th>
+                <th scope="col">Дом</th>
+                <th scope="col">Серийный номер</th>
+                <th scope="col">Показания</th>
+                <th scope="col">Удалить</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var home in Model)
+            {
+                <tr>
+                    <td>@home.IdHouse</td>
+                    <td>@home.StreetName</td>
+                    <td>@home.HouseNumber</td>
+                    <td>@home.Counters?.Where(x => x.IdHouse == @home.IdHouse)?.FirstOrDefault()?.Serial</td>
+                    <td>@home.Counters?.Where(x => x.IdHouse == @home.IdHouse)?.FirstOrDefault()?.Reading</td>
+                    <td>@Html.ActionLink("Удалить", "Remove", new { id = home.IdHouse }, new { @class = "btn btn-xs btn-primary" }) </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

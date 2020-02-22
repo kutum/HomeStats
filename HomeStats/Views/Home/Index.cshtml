@@ -1,32 +1,19 @@
-﻿@model IEnumerable<HomeStats.Models.House>
+﻿
+@using HomeStats.Models;
+@model IEnumerable<House>
 
 @{
     ViewData["Title"] = "HomeStats";
 }
 
+<hr />
 
-<div class="row">
-    <div class="col-md-3">
-
-        <table class="table table-bordered">
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Улица</th>
-                <th scope="col">Дом</th>
-                <th scope="col">Серийный номер</th>
-                <th scope="col">Показания</th>
-            </tr>
-            @foreach (var home in Model)
-            {
-                <tr>
-                    <td>@home.IdHouse</td>
-                    <td>@home.StreetName</td>
-                    <td>@home.HouseNumber</td>
-                    <td>@home.Counters.Where(x=>x.IdHouse == @home.IdHouse).FirstOrDefault().Serial</td>
-                    <td>@home.Counters.Where(x => x.IdHouse == @home.IdHouse).FirstOrDefault().Reading</td>
-                </tr>
-            }
-        </table>
-
+    <div id="summary" class="section panel panel-primary">
+        @await Html.PartialAsync("Summary", Model)
     </div>
-</div>
+    <div id="editor" class="section panel panel-primary">
+        @await Html.PartialAsync("Editor", new House())
+    </div>
+
+
+

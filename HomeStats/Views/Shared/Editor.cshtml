@@ -1,0 +1,19 @@
+﻿@model HomeStats.Models.House
+
+<div class="panel-heading">
+    Добавить дом
+</div>
+<div class="panel-body">
+    @using (Html.BeginForm("Add", "Home"))
+    {
+        <div class="form-group">
+            <label>Улица</label>
+            @Html.TextBoxFor(m => m.StreetName, new { @class = "form-control" })
+        </div>
+        <div class="form-group">
+            <label>Номер дома</label>
+            @Html.TextBoxFor(m => m.HouseNumber, new { @class = "form-control" })
+        </div>
+        <button type="submit" class="btn btn-primary">Сохранить</button>
+    }
+</div>
