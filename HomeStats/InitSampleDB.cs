@@ -9,18 +9,30 @@ namespace HomeStats
         {
             if(!context.Houses.Any())
             {
-                context.Houses.Add(
-                    new House
+                House house = new House
+                {
+                    StreetName = "Groove Street",
+                    HouseNumber = "228"
+                };
+
+
+                context.Houses.Add(house);
+
+                context.SaveChanges();
+
+                context.Counters.Add(
+                    new Counter
                     {
-                        StreetName = "Groove Street",
-                        HouseNumber = "228",
+                        IdHouse = house.IdHouse,
                         Serial = "AABB11",
                         Reading = 112233
                     }
                 );
+
+                context.SaveChanges();
             }
 
-            context.SaveChanges();
+            
         }
 
     }

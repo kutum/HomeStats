@@ -7,15 +7,14 @@
 
 <div class="row">
     <div class="col-md-3">
-        <h2>Home Page</h2>
 
-        <table cellspacing="5">
+        <table class="table table-bordered">
             <tr>
-                <td>IdHouse</td>
-                <td>StreetName</td>
-                <td>HouseNumber</td>
-                <td>Serial</td>
-                <td>Readint</td>
+                <th scope="col">Id</th>
+                <th scope="col">Улица</th>
+                <th scope="col">Дом</th>
+                <th scope="col">Серийный номер</th>
+                <th scope="col">Показания</th>
             </tr>
             @foreach (var home in Model)
             {
@@ -23,8 +22,8 @@
                     <td>@home.IdHouse</td>
                     <td>@home.StreetName</td>
                     <td>@home.HouseNumber</td>
-                    <td>@home.Serial</td>
-                    <td>@home.Reading</td>
+                    <td>@home.Counters.Where(x=>x.IdHouse == @home.IdHouse).FirstOrDefault().Serial</td>
+                    <td>@home.Counters.Where(x => x.IdHouse == @home.IdHouse).FirstOrDefault().Reading</td>
                 </tr>
             }
         </table>

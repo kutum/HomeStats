@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
 namespace HomeStats.Models
@@ -24,16 +25,12 @@ namespace HomeStats.Models
         [Required, Display(Name = "Номер дома"), StringLength(10, MinimumLength = 1)]
         public string HouseNumber { get; set; }
 
-        /// <summary>
-        /// Серийный номер
-        /// </summary>
-        [Required, Display(Name = "Серийный номер")]
-        public string Serial { get; set; }
+        public ICollection<Counter> Counters { get; set; }
 
-        /// <summary>
-        /// Показания счётчика
-        /// </summary>
-        [Range(0, Int32.MaxValue), Display(Name = "Показания счётчика")]
-        public int Reading { get; set; }
+        public House ()
+        {
+            Counters = new List<Counter>();
+        }
+        
     }
 }

@@ -1,5 +1,6 @@
 ﻿using HomeStats.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics;
 using System.Linq;
 
@@ -15,7 +16,7 @@ namespace HomeStats.Controllers
         }
         public IActionResult Index()
         {
-            return View(db.Houses.ToList());
+            return View(db.Houses.Include(x=>x.Counters).ToList());
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
