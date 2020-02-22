@@ -9,11 +9,13 @@
     <div class="col-md-3">
         <h2>Home Page</h2>
 
-        <table>
+        <table cellspacing="5">
             <tr>
                 <td>IdHouse</td>
                 <td>StreetName</td>
                 <td>HouseNumber</td>
+                <td>Serial</td>
+                <td>Readint</td>
             </tr>
             @foreach (var home in Model)
             {
@@ -21,6 +23,8 @@
                     <td>@home.IdHouse</td>
                     <td>@home.StreetName</td>
                     <td>@home.HouseNumber</td>
+                    <td>@home.Serial</td>
+                    <td>@home.Reading</td>
                 </tr>
             }
         </table>

@@ -5,7 +5,6 @@ namespace HomeStats.Models
     public class Context : DbContext
     {
         public DbSet<House> Houses { get; set; }
-        public DbSet<WaterCounter> WaterCounters { get; set; }
 
         public Context(DbContextOptions<Context> options) :base(options)
         {

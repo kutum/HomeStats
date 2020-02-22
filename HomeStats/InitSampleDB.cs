@@ -13,7 +13,9 @@ namespace HomeStats
                     new House
                     {
                         StreetName = "Groove Street",
-                        HouseNumber = "228"
+                        HouseNumber = "228",
+                        Serial = "AABB11",
+                        Reading = 112233
                     }
                 );
             }
