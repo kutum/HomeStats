@@ -18,17 +18,14 @@
         };
 
         function sendAjaxRequest(httpMethod, callback, url, reqData) {
+            console.log(reqData);
             $.ajax("/api" + (url ? "/" + url : ""), {
                 type: httpMethod,
                 success: callback,
-                data: reqData,
-                error: function (jqXHR, error, errorThrown) {
-                    if (jqXHR.status && jqXHR.status == 400) {
-                        alert(jqXHR.responseText);
-                    } else {
-                        alert("Something went wrong");
-                    }
-                }
+                data: JSON.stringify(reqData),
+                accepts: "application/json",
+                contentType: "application/json"
+                
             });
         }
 
@@ -38,7 +35,7 @@
                 for (var i = 0; i < data.length; i++) {
                     model.houses.push(data[i]);
                 }
-            });
+            }, "/house");
         }
 
         function removeItem(item) {
@@ -49,7 +46,7 @@
                         break;
                     }
                 }
-            }, item.idHouse);
+            }, "/house/" + item.idHouse);
         }
 
         function handleCreateClick() {
@@ -60,9 +57,9 @@
             sendAjaxRequest("POST", function (newItem) {
                 model.houses.push(newItem);
                 model.displaySummary(true);
-            }, null, {
-                    StreetName: model.editor.street,
-                    HouseNumber: model.editor.house
+            }, "/house", {
+                    streetName: model.editor.street(),
+                    houseNumber: model.editor.house()
                 });
         }
 
@@ -76,7 +73,7 @@
 
     <div id="summary" class="section panel panel-primary" data-bind="if: model.displaySummary">
 
-        <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
+        @*<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>*@
 
         <div class="panel-heading">Все дома</div>
         <div class="panel-body">
@@ -106,7 +103,7 @@
     </div>
     <div id="editor" class="section panel panel-primary" data-bind="ifnot: model.displaySummary">
 
-        <pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
+        @*<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>*@
 
         <div class="panel-heading">
             Добавить дом

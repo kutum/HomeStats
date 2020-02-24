@@ -5,12 +5,13 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HomeStats.Controllers
 {
     [Route("[controller]")]
     [ApiController]
-    
+
     public class ApiController : ControllerBase
     {
         HouseRepository repository = HouseRepository.Current;
@@ -20,32 +21,32 @@ namespace HomeStats.Controllers
             repository.db = context;
         }
 
-        [HttpGet]
+        [HttpGet("house")]
         public IEnumerable<House> Get()
         {
             return repository.GetAll();
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("house/{id}")]
         public House Get(int Id)
         {
             return repository.Get(Id);
         }       
         
-        [HttpPost]
-        public House CreateHouse([FromBody]House house)
+        [HttpPost("house")]
+        public House Create(House house)
         {
-               return repository.Add(house);
+            return repository.Add(house);
         }
 
-        [HttpPut]
-        public bool UpdateHouse (House house)
+        [HttpPut("house")]
+        public bool Update (House house)
         {
              return repository.Update(house);
         }
 
-        [HttpDelete("{id}")]
-        public void RemoveHouse (int Id)
+        [HttpDelete("house/{id}")]
+        public void Remove (int Id)
         {
             repository.Remove(Id);
         }
