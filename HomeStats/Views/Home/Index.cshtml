@@ -66,7 +66,6 @@
                 for (var i = 0; i < model.counters().length; i++) {
                     if (model.counters()[i].idCounter == item.idCounter) {
                         model.counters.remove(model.counters()[i]);
-                        console.log(model.counters()[i]);
                         break;
                     }
                 }
@@ -102,16 +101,22 @@
                 });
         }
 
-        function handleEditorCounterClick(idHouse) {
-            sendAjaxRequest("POST", function (newItem) {
-                model.counters.push(newItem);
-                model.displaySummary(true);
-                model.displayAddCounter(false);
-            }, "/counter", {
-                    idHouse: model.editorcounter.idHouse(),
-                    Serial: model.editorcounter.serial(),
-                    Reading: model.editorcounter.reading()
-                });
+        function handleEditorCounterClick() {
+
+            if (model.editorcounter.reading() > 0) {
+                sendAjaxRequest("POST", function (newItem) {
+                    model.counters.push(newItem);
+                    model.displaySummary(true);
+                    model.displayAddCounter(false);
+                }, "/counter", {
+                        idHouse: model.editorcounter.idHouse(),
+                        Serial: model.editorcounter.serial(),
+                        Reading: model.editorcounter.reading()
+                    });
+            }
+            else {
+                alert("Показания не могут быть ниже 0")
+            }
         }
 
         $(document).ready(function () {
