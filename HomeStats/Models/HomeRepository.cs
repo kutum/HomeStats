@@ -27,18 +27,23 @@ namespace HomeStats.Models
             return await db.Counters.AsNoTracking().Where(x => x.IdCounter == Id).FirstOrDefaultAsync();
         }
 
-        public async Task<House> GetMaxHouse()
-        {
-            var IdHouse = await db.Counters.MaxAsync(x => x.Reading);
 
-            return await db.Houses.Where(x => x.IdHouse == IdHouse).FirstOrDefaultAsync();
+        public async Task<House> GetMaxHouseAsync()
+        {
+            var Max = await db.Counters.MaxAsync(y => y.Reading);
+
+            var counter = await db.Counters.Where(x => x.Reading == Max ).FirstOrDefaultAsync();
+
+            return await db.Houses.Where(x => x.IdHouse == counter.IdHouse).FirstOrDefaultAsync();
         }
 
-        public async Task<House> GetMinHouse()
+        public async Task<House> GetMinHouseAsync()
         {
-            var IdHouse = await db.Counters.MinAsync(x => x.Reading);
+            var Min = await db.Counters.MinAsync(y => y.Reading);
 
-            return await db.Houses.Where(x => x.IdHouse == x.Counters.Max(y => y.Reading)).FirstOrDefaultAsync();
+            var counter = await db.Counters.Where(x => x.Reading == Min).FirstOrDefaultAsync();
+
+            return await db.Houses.Where(x => x.IdHouse == counter.IdHouse).FirstOrDefaultAsync();
         }
 
         public async Task<House> AddHouseAsync(House house)

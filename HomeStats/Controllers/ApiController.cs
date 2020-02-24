@@ -32,7 +32,19 @@ namespace HomeStats.Controllers
         {
             return await repository.GetHouse(Id);
         }       
-        
+
+        [HttpGet("house/max")]
+        public async Task<House> GetMaxAsync()
+        {
+            return await repository.GetMaxHouseAsync();
+        }
+
+        [HttpGet("house/min")]
+        public async Task<House> GetMinAsync()
+        {
+            return await repository.GetMinHouseAsync();
+        }
+
         [HttpPost("house")]
         public async Task<House> Create(House house)
         {
