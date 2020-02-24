@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -18,12 +19,12 @@ namespace HomeStats.Models
 
         public async Task<House> GetHouse(int Id)
         {
-            return await db.Houses.Include(x => x.Counters).Where(x => x.IdHouse == Id).FirstOrDefaultAsync();
+            return await db.Houses.AsNoTracking().Include(x => x.Counters).Where(x => x.IdHouse == Id).FirstOrDefaultAsync();
         }
 
         public async Task<Counter> GetCounter(int Id)
         {
-            return await db.Counters.Where(x => x.IdCounter == Id).FirstOrDefaultAsync();
+            return await db.Counters.AsNoTracking().Where(x => x.IdCounter == Id).FirstOrDefaultAsync();
         }
 
         public async Task<House> GetMaxHouse()
@@ -81,9 +82,27 @@ namespace HomeStats.Models
         public async Task<bool> UpdateHouseAsync(House house)
         {
             House currenthouse = await GetHouse(house.IdHouse);
+
+            house.Counters = currenthouse.Counters;
             if (currenthouse != null)
             {
                 db.Update(house);
+                await db.SaveChangesAsync();
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        public async Task<bool> UpdateCounterAsync(Counter counter)
+        {
+            Counter currentcounter = await GetCounter(counter.IdCounter);
+
+            if (currentcounter != null)
+            {
+                db.Update(counter);
                 await db.SaveChangesAsync();
                 return true;
             }

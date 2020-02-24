@@ -26,6 +26,27 @@
             displaySummaryCounter: ko.observable(false)
         };
 
+       
+        model.update = function (house) {
+            $.ajax({
+                type: "PUT", url: 'api/house',
+                data: JSON.stringify({ idHouse: house.idHouse, streetName: house.streetName, houseNumber: house.houseNumber }),
+                accepts: "application/json",
+                contentType: "application/json"
+            });
+        }
+
+        model.updatecounter = function (counter) {
+            if (counter.reading > 0) {
+                $.ajax({
+                    type: "PUT", url: 'api/counter',
+                    data: JSON.stringify({ idCounter: counter.idCounter, serial: counter.serial, reading: counter.reading, idHouse: counter.idHouse }),
+                    accepts: "application/json",
+                    contentType: "application/json"
+                });
+            }
+        }
+
         function sendAjaxRequest(httpMethod, callback, url, reqData) {
             $.ajax("/api" + (url ? "/" + url : ""), {
                 type: httpMethod,
@@ -125,7 +146,7 @@
         });
     </script>
 
-}@*<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>*@
+}<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
 
     <div id="summary" class="section panel panel-primary" data-bind="if: model.displaySummary">
 
@@ -144,17 +165,32 @@
                             Дом
                         </th>
                         <th></th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody data-bind="foreach: model.houses">
                     <tr>
                         <td data-bind="text: idHouse"></td>
-                        <td data-bind="text: streetName"></td>
-                        <td data-bind="text: houseNumber"></td>
+                        @*<td data-bind="text: streetName"></td>*@
+                        <td>
+                            <input class="form-control" data-bind="value: streetName" />
+                        </td>
+
+                        @*<td data-bind="text: houseNumber"></td>*@
+
+                        <td>
+                            <input class="form-control" data-bind="value: houseNumber" />
+                        </td>
                         <td>
                             <button class="btn btn-xs btn-primary"
                                     data-bind="click: removeItem">
                                 Удалить дом
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-xs btn-primary"
+                                    data-bind="click: $root.update">
+                                Cохранить изменения
                             </button>
                         </td>
                     </tr>
@@ -233,11 +269,19 @@
                         <td data-bind="text: idCounter"></td>
                         <td data-bind="text: idHouse"></td>
                         <td data-bind="text: serial"></td>
-                        <td data-bind="text: reading"></td>
+                        @*<td data-bind="text: reading"></td>*@
+                        <td>
+                            <input class="form-control" data-bind="value: reading" />
+                        </td>
                         <td>
                             <button class="btn btn-xs btn-toolbar"
                                     data-bind="click: removeItemCounter">
                                 Удалить счётчик
+                            </button>
+
+                            <button class="btn btn-xs btn-primary"
+                                    data-bind="click: $root.updatecounter">
+                                Cохранить изменения
                             </button>
                         </td>
                         <td></td>
@@ -291,7 +335,7 @@
                 </div>
                 <div class="form-group">
                     <label>Cерийный номер</label>
-                    <input class="form-control" data-bind="value: model.editorcounter.serial" />
+                    <input class="form-control" data-bind="value: model.editorcounter.serial , uniqueName: true" />
                 </div>
                 <div class="form-group">
                     <label>Показания</label>

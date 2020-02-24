@@ -51,6 +51,12 @@ namespace HomeStats.Controllers
              return await repository.UpdateHouseAsync(house);
         }
 
+        [HttpPut("counter")]
+        public async Task<bool> Update(Counter counter)
+        {
+            return await repository.UpdateCounterAsync(counter);
+        }
+
         [HttpDelete("house/{id}")]
         public async Task RemoveAsync (int Id)
         {
