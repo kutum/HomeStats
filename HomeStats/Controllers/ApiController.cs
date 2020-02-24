@@ -22,33 +22,45 @@ namespace HomeStats.Controllers
         }
 
         [HttpGet("house")]
-        public IEnumerable<House> Get()
+        public async Task<IEnumerable<House>> Get()
         {
-            return repository.GetAll();
+            return await repository.GetAllHouses();
         }
 
         [HttpGet("house/{id}")]
-        public House Get(int Id)
+        public async Task<House> Get(int Id)
         {
-            return repository.Get(Id);
+            return await repository.GetHouse(Id);
         }       
         
         [HttpPost("house")]
-        public House Create(House house)
+        public async Task<House> Create(House house)
         {
-            return repository.Add(house);
+            return await repository.AddHouseAsync(house);
+        }
+
+        [HttpPost("counter")]
+        public async Task<Counter> Create(Counter counter)
+        {
+            return await repository.AddCounterAsync(counter);
         }
 
         [HttpPut("house")]
-        public bool Update (House house)
+        public async Task<bool> Update (House house)
         {
-             return repository.Update(house);
+             return await repository.UpdateHouseAsync(house);
         }
 
         [HttpDelete("house/{id}")]
-        public void Remove (int Id)
+        public async Task RemoveAsync (int Id)
         {
-            repository.Remove(Id);
+            await repository.RemoveHouseAsync(Id);
+        }
+
+        [HttpDelete("counter/{id}")]
+        public async Task RemoveCounterAsync(int Id)
+        {
+            await repository.RemoveCounterAsync(Id);
         }
 
     }

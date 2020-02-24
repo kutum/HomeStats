@@ -10,15 +10,22 @@
     <script>
         var model = {
             houses: ko.observableArray(),
-            editor: {
+            counters: ko.observableArray(),
+            editorhouse: {
                 street: ko.observable("street"),
                 house: ko.observable("13")
             },
-            displaySummary: ko.observable(true)
+            editorcounter: {
+                idHouse: ko.observable("20"),
+                serial: ko.observable("shetchik"),
+                reading: ko.observable("11111")
+            },
+            displaySummary: ko.observable(true),
+            displayAddHouse: ko.observable(false),
+            displayAddCounter: ko.observable(false)
         };
 
         function sendAjaxRequest(httpMethod, callback, url, reqData) {
-            console.log(reqData);
             $.ajax("/api" + (url ? "/" + url : ""), {
                 type: httpMethod,
                 success: callback,
@@ -34,6 +41,10 @@
                 model.houses.removeAll();
                 for (var i = 0; i < data.length; i++) {
                     model.houses.push(data[i]);
+                    for (var j = 0; j < data[i].counters.length; j++) {
+                        model.counters.push(data[i].counters[j]);
+                    }
+                    
                 }
             }, "/house");
         }
@@ -49,17 +60,48 @@
             }, "/house/" + item.idHouse);
         }
 
-        function handleCreateClick() {
-            model.displaySummary(false);
+        function removeItemCounter(item) { 
+            sendAjaxRequest("DELETE", function () {
+                for (var i = 0; i < model.counters().length; i++) {
+                    if (model.counters()[i].idCounter == item.idCounter) {
+                        model.counters.remove(model.counters()[i]);
+                        console.log(model.counters()[i]);
+                        break;
+                    }
+                }
+            }, "/counter/" + item.idCounter);
         }
 
-        function handleEditorClick() {
+        function handleCreateHouseClick() {
+            model.displaySummary(false);
+            model.displayAddHouse(true);
+        }
+
+        function handleCreateCounterClick() {
+            model.displaySummary(false);
+            model.displayAddCounter(true);
+        }
+
+        function handleEditorHouseClick() {
             sendAjaxRequest("POST", function (newItem) {
                 model.houses.push(newItem);
                 model.displaySummary(true);
+                model.displayAddHouse(false);
             }, "/house", {
-                    streetName: model.editor.street(),
-                    houseNumber: model.editor.house()
+                    streetName: model.editorhouse.street(),
+                    houseNumber: model.editorhouse.house()
+                });
+        }
+
+        function handleEditorCounterClick(idHouse) {
+            sendAjaxRequest("POST", function (newItem) {
+                model.counters.push(newItem);
+                model.displaySummary(true);
+                model.displayAddCounter(false);
+            }, "/counter", {
+                    idHouse: model.editorcounter.idHouse(),
+                    Serial: model.editorcounter.serial(),
+                    Reading: model.editorcounter.reading()
                 });
         }
 
@@ -69,17 +111,28 @@
         });
     </script>
 
-}
+}<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>
 
     <div id="summary" class="section panel panel-primary" data-bind="if: model.displaySummary">
 
-        @*<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>*@
+        
 
         <div class="panel-heading">Все дома</div>
         <div class="panel-body">
             <table class="table table-striped table-condensed">
                 <thead>
-                    <tr><th>ID</th><th>Улица</th><th>Дом</th><th></th></tr>
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            Улица
+                        </th>
+                        <th>
+                            Дом
+                        </th>
+                        <th></th>
+                    </tr>
                 </thead>
                 <tbody data-bind="foreach: model.houses">
                     <tr>
@@ -89,19 +142,61 @@
                         <td>
                             <button class="btn btn-xs btn-primary"
                                     data-bind="click: removeItem">
-                                Удалить
+                                Удалить дом
                             </button>
                         </td>
                     </tr>
+                    <tr></tr>
                 </tbody>
             </table>
             <button class="btn btn-primary"
-                    data-bind="click: handleCreateClick">
-                Создать
+                    data-bind="click: handleCreateHouseClick">
+                Добавить дом
+            </button>
+            <table class="table">
+                <thead title="Счётчики">
+                    <tr>
+                        <th>
+                            ID
+                        </th>
+                        <th>
+                            ID дома
+                        </th>
+                        <th>
+                            Серийный номер
+                        </th>
+                        <th>
+                            Показания
+                        </th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody data-bind="foreach: model.counters">
+                    <tr>
+                        <td data-bind="text: idCounter"></td>
+                        <td data-bind="text: idHouse"></td>
+                        <td data-bind="text: serial"></td>
+                        <td data-bind="text: reading"></td>
+                        <td>
+                            <button class="btn btn-xs btn-toolbar"
+                                    data-bind="click: removeItemCounter">
+                                Удалить счётчик
+                            </button>
+                        </td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+
+
+            <button class="btn btn-primary"
+                    data-bind="click: handleCreateCounterClick">
+                Добавить счётчик
             </button>
         </div>
     </div>
-    <div id="editor" class="section panel panel-primary" data-bind="ifnot: model.displaySummary">
+    <div id="editor" class="section panel panel-primary" data-bind="if: model.displayAddHouse">
 
         @*<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>*@
 
@@ -111,14 +206,41 @@
         <div class="panel-body">
             <div class="form-group">
                 <label>Улица</label>
-                <input class="form-control" data-bind="value: model.editor.street" />
+                <input class="form-control" data-bind="value: model.editorhouse.street" />
             </div>
             <div class="form-group">
                 <label>Номер дома</label>
-                <input class="form-control" data-bind="value: model.editor.house" />
+                <input class="form-control" data-bind="value: model.editorhouse.house" />
             </div>
             <button class="btn btn-primary"
-                    data-bind="click: handleEditorClick">
+                    data-bind="click: handleEditorHouseClick">
+                Сохранить
+            </button>
+        </div>
+    </div>
+
+    <div id="editor" class="section panel panel-primary" data-bind="if: model.displayAddCounter">
+
+        @*<pre data-bind="text: ko.toJSON($data, null, 2)"></pre>*@
+
+        <div class="panel-heading">
+            Добавить счётчик
+        </div>
+        <div class="panel-body">
+            <div class="form-group">
+                <label>ID дома</label>
+                <input class="form-control" data-bind="value: model.editorcounter.idHouse" />
+            </div>
+            <div class="form-group">
+                <label>Cерийный номер</label>
+                <input class="form-control" data-bind="value: model.editorcounter.serial" />
+            </div>
+            <div class="form-group">
+                <label>Показания</label>
+                <input class="form-control" data-bind="value: model.editorcounter.reading" />
+            </div>
+            <button class="btn btn-primary"
+                    data-bind="click: handleEditorCounterClick">
                 Сохранить
             </button>
         </div>

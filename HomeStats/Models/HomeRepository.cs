@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace HomeStats.Models
 {
@@ -10,41 +11,80 @@ namespace HomeStats.Models
 
         public static HouseRepository Current { get; } = new HouseRepository();
 
-        public IEnumerable<House> GetAll()
+        public async Task<IEnumerable<House>> GetAllHouses()
         {
-            return db.Houses.Include(x=>x.Counters).Select(x => x).ToList();
+            return await db.Houses.Include(x=>x.Counters).Select(x => x).ToListAsync();
         }
 
-        public House Get(int Id)
+        public async Task<House> GetHouse(int Id)
         {
-            return db.Houses.Include(x => x.Counters).Where(x => x.IdHouse == Id).FirstOrDefault();
+            return await db.Houses.Include(x => x.Counters).Where(x => x.IdHouse == Id).FirstOrDefaultAsync();
         }
 
-        public House Add(House house)
+        public async Task<Counter> GetCounter(int Id)
         {
-            db.Houses.Add(house);
-            db.SaveChanges();
+            return await db.Counters.Where(x => x.IdCounter == Id).FirstOrDefaultAsync();
+        }
+
+        public async Task<House> GetMaxHouse()
+        {
+            var IdHouse = await db.Counters.MaxAsync(x => x.Reading);
+
+            return await db.Houses.Where(x => x.IdHouse == IdHouse).FirstOrDefaultAsync();
+        }
+
+        public async Task<House> GetMinHouse()
+        {
+            var IdHouse = await db.Counters.MinAsync(x => x.Reading);
+
+            return await db.Houses.Where(x => x.IdHouse == x.Counters.Max(y => y.Reading)).FirstOrDefaultAsync();
+        }
+
+        public async Task<House> AddHouseAsync(House house)
+        {
+            await db.Houses.AddAsync(house);
+            await db.SaveChangesAsync();
+
             return house;
         }
 
-        public void Remove(int id)
+        public async Task<Counter> AddCounterAsync(Counter counter)
         {
-            House house = Get(id);
+            await db.Counters.AddAsync(counter);
+            await db.SaveChangesAsync();
+
+            return counter;
+        }
+
+        public async Task RemoveHouseAsync(int id)
+        {
+            House house = await GetHouse(id);
 
             if (house != null)
             {
                 db.Remove(house);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
             }
         }
 
-        public bool Update(House house)
+        public async Task RemoveCounterAsync(int id)
         {
-            House currenthouse = Get(house.IdHouse);
+            Counter counter = await GetCounter(id);
+
+            if(counter != null)
+            {
+                db.Remove(counter);
+                await db.SaveChangesAsync();
+            }
+        }
+
+        public async Task<bool> UpdateHouseAsync(House house)
+        {
+            House currenthouse = await GetHouse(house.IdHouse);
             if (currenthouse != null)
             {
                 db.Update(house);
-                db.SaveChanges();
+                await db.SaveChangesAsync();
                 return true;
             }
             else
